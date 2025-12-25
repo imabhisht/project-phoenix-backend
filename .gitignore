@@ -48,3 +48,6 @@ lerna-debug.log*
 *.swo
 *~
 .tmp
+
+# Prisma
+/src/modules/prisma/generated
