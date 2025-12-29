@@ -5,6 +5,8 @@ import { configuration } from '@core/config/configuration';
 import { HealthModule } from '@modules/health';
 import { FirebaseModule } from '@modules/firebase';
 import { PrismaModule } from '@modules/prisma';
+import { MongodbModule } from '@infrastructure/database/mongodb';
+import { UserModule } from '@modules/user/user.module';
 import { AllExceptionsFilter } from '@core/exceptions';
 
 @Module({
@@ -14,8 +16,10 @@ import { AllExceptionsFilter } from '@core/exceptions';
       load: [configuration],
       envFilePath: ['.env', '.env.local'],
     }),
+    MongodbModule,
     PrismaModule,
     FirebaseModule,
+    UserModule,
     HealthModule,
   ],
   controllers: [],
@@ -26,4 +30,4 @@ import { AllExceptionsFilter } from '@core/exceptions';
     },
   ],
 })
-export class AppModule {}
+export class AppModule { }

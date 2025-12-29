@@ -14,4 +14,19 @@ model tenants {
   description        String?
   created_at         DateTime @default(now()) @db.Timestamptz(6)
   updated_at         DateTime @default(now()) @db.Timestamptz(6)
+  users              users[]
+}
+
+model users {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name            String
+  organization_id String
+  email           String
+  username        String   @unique
+  created_at      DateTime @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime @default(now()) @db.Timestamptz(6)
+  role            String?
+  tenants         tenants  @relation(fields: [organization_id], references: [id], onUpdate: NoAction)
+
+  @@unique([organization_id, email], map: "users_org_email_unique")
 }
