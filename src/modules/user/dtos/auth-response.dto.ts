@@ -2,6 +2,7 @@ import { User } from '../domain/entities/user.entity';
 
 export class AuthResponseDto {
     token: string;
+    firebase_tenant_id: string;
     user: {
         id: string;
         name: string;
@@ -10,8 +11,9 @@ export class AuthResponseDto {
         role: string;
     };
 
-    constructor(token: string, user: User) {
+    constructor(token: string, firebase_tenant_id: string, user: User) {
         this.token = token;
+        this.firebase_tenant_id = firebase_tenant_id;
         this.user = {
             id: user.id,
             name: user.name,

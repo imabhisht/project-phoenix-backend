@@ -130,7 +130,7 @@ export class UserService {
                 `OTP verified successfully for user: ${email}, org: ${org_id}`,
             );
 
-            return new AuthResponseDto(firebaseToken, user);
+            return new AuthResponseDto(firebaseToken, tenant.firebase_tenant_id, user);
         } catch (error) {
             this.logger.error('Failed to verify OTP', error);
             throw error;
@@ -291,7 +291,7 @@ export class UserService {
                 );
             }
 
-            return new AuthResponseDto(firebaseToken, user);
+            return new AuthResponseDto(firebaseToken, tenant.firebase_tenant_id, user);
         } catch (error) {
             this.logger.error('Failed to create owner user', error);
             throw error;
