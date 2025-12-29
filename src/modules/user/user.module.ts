@@ -7,6 +7,7 @@ import { UserService } from './services/user.service';
 import { UserRepository } from './repository/user.repository';
 import { UserOtpRepository } from './repository/user-otp.repository';
 import { TenantsRepository } from '@modules/tenants/repository/tenants.repository';
+import { FirebaseAuthGuard, RolesGuard } from '@shared/guards';
 
 @Module({
     imports: [PrismaModule, FirebaseModule, MongodbModule],
@@ -16,7 +17,9 @@ import { TenantsRepository } from '@modules/tenants/repository/tenants.repositor
         UserRepository,
         UserOtpRepository,
         TenantsRepository,
+        FirebaseAuthGuard,
+        RolesGuard,
     ],
-    exports: [UserService],
+    exports: [UserService, FirebaseAuthGuard, RolesGuard],
 })
 export class UserModule { }

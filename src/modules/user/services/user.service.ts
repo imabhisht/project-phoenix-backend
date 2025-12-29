@@ -13,6 +13,7 @@ import { TenantsRepository } from '@modules/tenants/repository/tenants.repositor
 import { AuthResponseDto } from '../dtos/auth-response.dto';
 import { User } from '../domain/entities/user.entity';
 import { UserRoles } from '../domain/enums/userRoles.enum';
+import { FirebaseUser } from '@shared/interfaces';
 const generator = require('beautiful-username-generator');
 
 @Injectable()
@@ -25,6 +26,10 @@ export class UserService {
         private readonly tenantsRepository: TenantsRepository,
         private readonly firebaseService: FirebaseService,
     ) { }
+
+    async userInfo(user: FirebaseUser): Promise<User> {
+        return this.userRepository.findById(user.user_id);
+    }
 
     /**
      * Request OTP for user authentication
