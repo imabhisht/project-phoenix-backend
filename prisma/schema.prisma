@@ -18,7 +18,7 @@ model tenants {
 }
 
 model users {
-  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id              String   @id
   name            String
   organization_id String
   email           String

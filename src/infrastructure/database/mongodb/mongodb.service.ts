@@ -28,27 +28,39 @@ export class MongodbService implements OnModuleInit, OnModuleDestroy {
 
             this.logger.log('Initializing MongoDB connection...');
 
-            // Build MongoDB client options
-            const clientOptions: any = {
-                maxIdleTimeMS: mongoConfig.options.maxIdleTimeMS,
-                tls: mongoConfig.options.tls,
-                ...(mongoConfig.options.tlsCAFile && {
-                    tlsCAFile: mongoConfig.options.tlsCAFile,
-                }),
-            };
+            // Build connection string with parameters
+            let connectionString = mongoConfig.host;
 
-            // Only add auth if username and password are provided separately
-            // (connection string may already contain credentials)
-            if (mongoConfig.options.auth?.username && mongoConfig.options.auth?.password) {
-                clientOptions.auth = {
-                    username: mongoConfig.options.auth.username,
-                    password: mongoConfig.options.auth.password,
-                };
-                // Specify authSource for proper authentication
-                clientOptions.authSource = 'admin';
+            // Parse existing connection string to check if it already has parameters
+            const hasParams = connectionString.includes('?');
+            const separator = hasParams ? '&' : '?';
+
+            // Add connection parameters to the connection string for better cloud compatibility
+            const params = new URLSearchParams();
+
+            // Set retry settings for better reliability
+            params.append('retryWrites', 'true');
+            params.append('w', 'majority');
+
+            // Set maxIdleTimeMS
+            if (mongoConfig.options.maxIdleTimeMS) {
+                params.append('maxIdleTimeMS', mongoConfig.options.maxIdleTimeMS.toString());
             }
 
-            this.client = new MongoClient(mongoConfig.host, clientOptions);
+            // Append parameters to connection string
+            const paramString = params.toString();
+            if (paramString) {
+                connectionString = `${connectionString}${separator}${paramString}`;
+            }
+
+            // Build minimal client options
+            const clientOptions: any = {
+                // Let the driver handle TLS automatically based on the connection string
+                serverSelectionTimeoutMS: 30000, // 30 seconds timeout
+                socketTimeoutMS: 45000, // 45 seconds socket timeout
+            };
+
+            this.client = new MongoClient(connectionString, clientOptions);
 
             await this.client.connect();
 
