@@ -6,7 +6,9 @@ import { HealthModule } from '@modules/health';
 import { FirebaseModule } from '@modules/firebase';
 import { PrismaModule } from '@modules/prisma';
 import { MongodbModule } from '@infrastructure/database/mongodb';
+import { MongooseDbModule } from '@infrastructure/database/mongoose';
 import { UserModule } from '@modules/user/user.module';
+import { CollectionModule } from '@modules/collection/collection.module';
 import { AllExceptionsFilter } from '@core/exceptions';
 
 @Module({
@@ -17,9 +19,11 @@ import { AllExceptionsFilter } from '@core/exceptions';
       envFilePath: ['.env', '.env.local'],
     }),
     MongodbModule,
+    MongooseDbModule,
     PrismaModule,
     FirebaseModule,
     UserModule,
+    CollectionModule,
     HealthModule,
   ],
   controllers: [],

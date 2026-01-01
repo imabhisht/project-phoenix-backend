@@ -17,16 +17,18 @@ export class APIResponse<T> {
     success: boolean;
     data: T | EmptyAPIResponse;
     errorObject: APIErrorResponse | null;
+    message: string;
 
     /**
      * Create a successful API response
      * @param data - The data to return in the response
      * @returns APIResponse with success=true and populated data
      */
-    SuccessResult(data: T): APIResponse<T> {
+    SuccessResult(data: T, message?: string): APIResponse<T> {
         this.success = true;
         this.data = data;
         this.errorObject = null;
+        this.message = message || 'Successfull operation';
 
         return this;
     }
@@ -42,9 +44,11 @@ export class APIResponse<T> {
         errorCode: number,
         userErrorText: string,
         developerErrorText: string,
+        message?: string,
     ): APIResponse<EmptyAPIResponse> {
         this.success = false;
         this.data = {} as EmptyAPIResponse;
+        this.message = message || 'Failed operation';
         this.errorObject = new APIErrorResponse(
             errorCode,
             userErrorText,
