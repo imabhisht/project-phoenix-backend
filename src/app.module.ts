@@ -9,7 +9,9 @@ import { MongodbModule } from '@infrastructure/database/mongodb';
 import { MongooseDbModule } from '@infrastructure/database/mongoose';
 import { UserModule } from '@modules/user/user.module';
 import { CollectionModule } from '@modules/collection/collection.module';
+import { CollectionSourceModule } from '@modules/collection_source/collection_source.module';
 import { AllExceptionsFilter } from '@core/exceptions';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -24,9 +26,10 @@ import { AllExceptionsFilter } from '@core/exceptions';
     FirebaseModule,
     UserModule,
     CollectionModule,
+    CollectionSourceModule,
     HealthModule,
   ],
-  controllers: [],
+  controllers: [AppController],
   providers: [
     {
       provide: APP_FILTER,

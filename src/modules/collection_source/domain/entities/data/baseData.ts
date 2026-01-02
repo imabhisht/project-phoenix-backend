@@ -1,5 +1,5 @@
-import { CollectionSourceStatusEnum } from "../enums/status";
+import { SourceTypeEnum } from "../../enums/source_types";
 
 export abstract class BaseCollectionSourceData {
-    type: CollectionSourceStatusEnum;
+    type: SourceTypeEnum;
 }

@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
 import { IdentifiableEntity } from '@shared/scheme/IdentifiableEntity.scheme';
-import { CollectionSourceStatusEnum } from './enums/status';
+import { CollectionSourceStatusEnum } from '../enums/status';
 import { BaseCollectionSourceData } from './data/baseData';
 
 @Schema({ collection: 'collection_source' })
@@ -9,10 +9,13 @@ export class CollectionSource extends IdentifiableEntity {
     @Prop({ required: true, type: String, ref: 'Collection' })
     collection_id: string;
 
+    @Prop({ required: true, type: String })
+    name: string;
+
     @Prop({ required: true, type: BaseCollectionSourceData })
     data: BaseCollectionSourceData;
 
-    @Prop({ required: true, type: CollectionSourceStatusEnum, default: CollectionSourceStatusEnum.NOT_STARTED })
+    @Prop({ required: true, type: String, enum: Object.values(CollectionSourceStatusEnum), default: CollectionSourceStatusEnum.NOT_STARTED })
     status: CollectionSourceStatusEnum;
 
     @Prop({ type: Date, default: null })

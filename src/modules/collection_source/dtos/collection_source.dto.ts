@@ -7,11 +7,16 @@ import { BaseCollectionSourceDataDTO } from './data/baseData.collection_source';
 import { AWS_S3CollectionSourceDataDTO } from './data/aws_s3/aws_s3.collection_source.dto';
 import { SourceTypeEnum } from '../domain/enums/source_types';
 import { CollectionSourceDataFactory } from './data/dataFactory.collection_source';
+import { GoogleDriveCollectionSourceDataDTO } from './data/google_drive/google_drive.collection_source.dto';
 
 export class CollectionSourceDTO {
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     id: string;
+
+    @IsString()
+    @IsNotEmpty()
+    name: string;
 
     @IsString()
     @IsNotEmpty()
@@ -25,6 +30,7 @@ export class CollectionSourceDTO {
             property: 'type',
             subTypes: [
                 { value: AWS_S3CollectionSourceDataDTO, name: SourceTypeEnum.AWS_S3 },
+                { value: GoogleDriveCollectionSourceDataDTO, name: SourceTypeEnum.GOOGLE_DRIVE },
             ],
         },
     })
@@ -51,22 +57,23 @@ export class CollectionSourceDTO {
     updated_at?: Date;
 
     toSchema(): CollectionSource {
-        return {
-            _id: this.id,
-            collection_id: this.collection_id,
-            data: this.data,
-            status: CollectionSourceStatusEnum.NOT_STARTED,
-            last_synced_at: null,
-            is_deleted: false,
-            created_at: new Date(),
-            updated_at: new Date(),
-        };
+        const collectionSource = new CollectionSource();
+        collectionSource.collection_id = this.collection_id;
+        collectionSource.name = this.name;
+        collectionSource.data = this.data;
+        collectionSource.status = CollectionSourceStatusEnum.NOT_STARTED;
+        collectionSource.last_synced_at = null;
+        collectionSource.is_deleted = false;
+        collectionSource.created_at = new Date();
+        collectionSource.updated_at = new Date();
+        return collectionSource;
     }
 
     static fromSchema(collectionSource: CollectionSource): CollectionSourceDTO {
         const dto = new CollectionSourceDTO();
         dto.id = collectionSource._id;
         dto.collection_id = collectionSource.collection_id;
+        dto.name = collectionSource.name;
         dto.data = CollectionSourceDataFactory.getCollectionSourceDataDTO(collectionSource.data);
         dto.status = collectionSource.status;
         dto.last_synced_at = collectionSource.last_synced_at;
