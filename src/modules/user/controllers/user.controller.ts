@@ -124,7 +124,7 @@ export class UserController {
                 createOwnerDto.name,
             );
 
-            return new APIResponse<EmptyAPIResponse>()
+            return new APIResponse<EmptyAPIResponse>().SuccessResult({});
         } catch (error: any) {
             this.logger.error('Failed to create owner', error);
             return new APIResponse<EmptyAPIResponse>().ErrorResult(

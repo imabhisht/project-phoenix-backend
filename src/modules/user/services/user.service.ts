@@ -153,7 +153,7 @@ export class UserService {
             const customToken = await tenantAuth.createCustomToken(user._id, {
                 email: user.email,
                 name: user.name,
-                organization_id: user.organization_id,
+                organization_id: user.org_id,
                 role: user.role,
             });
 
@@ -231,7 +231,7 @@ export class UserService {
                 user = await this.userRepository.create({
                     _id: firebaseUser.uid, // Use Firebase UID as user ID
                     name: name,
-                    organization_id: org_id,
+                    org_id: org_id,
                     email: email,
                     username: username,
                     role: UserRoles.OWNER,

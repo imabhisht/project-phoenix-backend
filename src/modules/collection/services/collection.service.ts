@@ -2,6 +2,11 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CollectionRepository } from '../repository/collection.repository';
 import { CollectionDTO } from '../dtos/collection.dto';
 import { Collection } from '../domain/entities/collection.schema';
+import { CollectionSourceRepository } from '@modules/collection_source/repository/collection_source.repository';
+import { ManualUploadCollectionSourceData } from '@modules/collection_source/domain/entities/data/manual_upload/manual_upload.collection_source.scheme';
+import { CollectionSource } from '@modules/collection_source/domain/entities/collection_source.scheme';
+import { FirebaseUser } from '@shared/interfaces';
+
 
 @Injectable()
 export class CollectionService {
@@ -9,11 +14,21 @@ export class CollectionService {
 
     constructor(
         private readonly collectionRepository: CollectionRepository,
+        private readonly collectionSourceRepository: CollectionSourceRepository
     ) { }
 
-    async create(createCollectionDTO: CollectionDTO): Promise<CollectionDTO> {
-        const newCollection = await this.collectionRepository.create(createCollectionDTO.toSchema());
-        return CollectionDTO.fromSchema(newCollection);
+    async create(user: FirebaseUser, createCollectionDTO: CollectionDTO): Promise<CollectionDTO> {
+        const collection = await this.collectionRepository.create(createCollectionDTO.toSchema(user.organization_id, user.user_id))
+
+        const manualUploadCollectionSource = new ManualUploadCollectionSourceData()
+        const collectionSource = new CollectionSource()
+        collectionSource.collection_id = collection._id
+        collectionSource.name = `Manual Upload`
+        collectionSource.data = manualUploadCollectionSource
+
+        await this.collectionSourceRepository.create(collectionSource)
+
+        return CollectionDTO.fromSchema(collection);
     }
 
     async findById(id: string): Promise<CollectionDTO> {
@@ -26,9 +41,9 @@ export class CollectionService {
         return collections.map(collection => CollectionDTO.fromSchema(collection));
     }
 
-    async update(id: string, updateCollectionDTO: CollectionDTO): Promise<CollectionDTO> {
+    async update(user: FirebaseUser, id: string, updateCollectionDTO: CollectionDTO): Promise<CollectionDTO> {
         await this.findById(id);
-        const updateData = updateCollectionDTO.toSchema();
+        const updateData = updateCollectionDTO.toSchema(user.organization_id, user.user_id);
         const updatedCollection = await this.collectionRepository.update(id, updateData);
         return CollectionDTO.fromSchema(updatedCollection);
     }

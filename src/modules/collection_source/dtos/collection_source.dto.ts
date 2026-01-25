@@ -61,8 +61,6 @@ export class CollectionSourceDTO {
         collectionSource.collection_id = this.collection_id;
         collectionSource.name = this.name;
         collectionSource.data = this.data;
-        collectionSource.status = CollectionSourceStatusEnum.NOT_STARTED;
-        collectionSource.last_synced_at = null;
         collectionSource.is_deleted = false;
         collectionSource.created_at = new Date();
         collectionSource.updated_at = new Date();
@@ -75,8 +73,6 @@ export class CollectionSourceDTO {
         dto.collection_id = collectionSource.collection_id;
         dto.name = collectionSource.name;
         dto.data = CollectionSourceDataFactory.getCollectionSourceDataDTO(collectionSource.data);
-        dto.status = collectionSource.status;
-        dto.last_synced_at = collectionSource.last_synced_at;
         dto.is_deleted = collectionSource.is_deleted;
         dto.created_at = collectionSource.created_at;
         dto.updated_at = collectionSource.updated_at;

@@ -3,13 +3,13 @@ import { Document } from 'mongoose';
 import { IdentifiableEntity } from '@shared/scheme/IdentifiableEntity.scheme';
 import { UserRoles } from '../enums/userRoles.enum';
 
-@Schema({ collection: 'users' })
+@Schema({ collection: 'user' })
 export class User extends IdentifiableEntity {
     @Prop({ required: true, type: String })
     name: string;
 
     @Prop({ required: true, type: String })
-    organization_id: string;
+    org_id: string;
 
     @Prop({ required: true, type: String })
     email: string;

@@ -52,7 +52,7 @@ export class UserRepository implements OnModuleInit {
 
     async findByOrganizationAndEmail(organizationId: string, email: string): Promise<User | undefined> {
         return await this.userModel.findOne({
-            organization_id: organizationId,
+            org_id: organizationId,
             email: email
         }).lean();
         
@@ -61,7 +61,7 @@ export class UserRepository implements OnModuleInit {
     async create(userData: {
         _id: string;
         name: string;
-        organization_id: string;
+        org_id: string;
         email: string;
         username: string;
         role: string;

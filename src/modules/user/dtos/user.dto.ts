@@ -23,7 +23,7 @@ export class UserDTO {
     static fromSchema(user: User): UserDTO {
         return {
             id: user._id,
-            organization_id: user.organization_id,
+            organization_id: user.org_id,
             name: user.name,
             email: user.email,
             username: user.username,

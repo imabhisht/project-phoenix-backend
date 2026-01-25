@@ -18,7 +18,7 @@ export class AuthResponseDto {
             id: user._id,
             name: user.name,
             email: user.email,
-            organization_id: user.organization_id,
+            organization_id: user.org_id,
             role: user.role,
         };
     }
