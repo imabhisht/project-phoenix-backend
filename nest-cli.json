@@ -5,11 +5,6 @@
   "compilerOptions": {
     "deleteOutDir": true,
     "webpack": false,
-    "assets": [
-      {
-        "include": "modules/prisma/generated/**/*",
-        "outDir": "dist/src"
-      }
-    ]
+    "assets": []
   }
 }

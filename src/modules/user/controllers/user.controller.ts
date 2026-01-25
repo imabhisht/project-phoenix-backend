@@ -18,7 +18,7 @@ import { FirebaseAuthGuard, RolesGuard } from '@shared/guards';
 import { CurrentUser, Roles } from '@shared/decorators';
 import { FirebaseUser } from '@shared/interfaces';
 import { UserRoles } from '../domain/enums/userRoles.enum';
-import { User } from '../domain/entities/user.entity';
+import { UserDTO } from '../dtos/user.dto';
 
 @Controller('user')
 export class UserController {
@@ -31,11 +31,11 @@ export class UserController {
     @HttpCode(HttpStatus.OK)
     async getUserInfo(
         @CurrentUser() user: FirebaseUser,
-    ): Promise<APIResponse<User> | APIResponse<EmptyAPIResponse>> {
+    ): Promise<APIResponse<UserDTO> | APIResponse<EmptyAPIResponse>> {
         try {
             const userInfo = await this.userService.userInfo(user);
 
-            return new APIResponse<User>().SuccessResult(userInfo);
+            return new APIResponse<UserDTO>().SuccessResult(userInfo);
         } catch (error: any) {
             this.logger.error('Failed to get profile', error);
             return new APIResponse<EmptyAPIResponse>().ErrorResult(
@@ -116,19 +116,15 @@ export class UserController {
     @HttpCode(HttpStatus.CREATED)
     async createOwner(
         @Body() createOwnerDto: CreateOwnerDto,
-    ): Promise<APIResponse<AuthResponseDto> | APIResponse<EmptyAPIResponse>> {
+    ): Promise<APIResponse<EmptyAPIResponse>> {
         try {
-            this.logger.log(
-                `Owner creation request received for email: ${createOwnerDto.email}, org: ${createOwnerDto.org_id}`,
-            );
-
-            const result = await this.userService.createOwner(
+            await this.userService.createOwner(
                 createOwnerDto.org_id,
                 createOwnerDto.email,
                 createOwnerDto.name,
             );
 
-            return new APIResponse<AuthResponseDto>().SuccessResult(result);
+            return new APIResponse<EmptyAPIResponse>()
         } catch (error: any) {
             this.logger.error('Failed to create owner', error);
             return new APIResponse<EmptyAPIResponse>().ErrorResult(

@@ -1,4 +1,4 @@
-import { User } from '../domain/entities/user.entity';
+import { User } from '@modules/user/domain/entities/user.scheme';
 
 export class AuthResponseDto {
     token: string;
@@ -15,7 +15,7 @@ export class AuthResponseDto {
         this.token = token;
         this.firebase_tenant_id = firebase_tenant_id;
         this.user = {
-            id: user.id,
+            id: user._id,
             name: user.name,
             email: user.email,
             organization_id: user.organization_id,

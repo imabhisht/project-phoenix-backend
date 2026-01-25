@@ -4,7 +4,6 @@ import { APP_FILTER } from '@nestjs/core';
 import { configuration } from '@core/config/configuration';
 import { HealthModule } from '@modules/health';
 import { FirebaseModule } from '@modules/firebase';
-import { PrismaModule } from '@modules/prisma';
 import { MongodbModule } from '@infrastructure/database/mongodb';
 import { MongooseDbModule } from '@infrastructure/database/mongoose';
 import { UserModule } from '@modules/user/user.module';
@@ -12,6 +11,7 @@ import { CollectionModule } from '@modules/collection/collection.module';
 import { CollectionSourceModule } from '@modules/collection_source/collection_source.module';
 import { AllExceptionsFilter } from '@core/exceptions';
 import { AppController } from './app.controller';
+import { MediaModule } from '@modules/media/media.module';
 
 @Module({
   imports: [
@@ -22,12 +22,12 @@ import { AppController } from './app.controller';
     }),
     MongodbModule,
     MongooseDbModule,
-    PrismaModule,
     FirebaseModule,
     UserModule,
     CollectionModule,
     CollectionSourceModule,
     HealthModule,
+    MediaModule
   ],
   controllers: [AppController],
   providers: [

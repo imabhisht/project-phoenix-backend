@@ -1,3 +1,5 @@
+import { UserRoles } from "@modules/user/domain/enums/userRoles.enum";
+
 /**
  * Interface representing a Firebase authenticated user
  * Based on the decoded Firebase JWT token structure
@@ -13,7 +15,7 @@ export interface FirebaseUser {
     organization_id: string;
 
     /** User's role (e.g., 'owner', 'admin', 'user') */
-    role: string;
+    role: UserRoles;
 
     /** Firebase user ID */
     user_id: string;

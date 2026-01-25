@@ -8,12 +8,13 @@ import {
 } from '@nestjs/common';
 import { FirebaseService } from '@modules/firebase/firebase.service';
 import { UserRepository } from '../repository/user.repository';
-import { UserOtpRepository } from '../repository/user-otp.repository';
 import { TenantsRepository } from '@modules/tenants/repository/tenants.repository';
 import { AuthResponseDto } from '../dtos/auth-response.dto';
-import { User } from '../domain/entities/user.entity';
 import { UserRoles } from '../domain/enums/userRoles.enum';
+import { User } from '@modules/user/domain/entities/user.scheme';
 import { FirebaseUser } from '@shared/interfaces';
+import { UserDTO } from '../dtos/user.dto';
+
 const generator = require('beautiful-username-generator');
 
 @Injectable()
@@ -22,19 +23,15 @@ export class UserService {
 
     constructor(
         private readonly userRepository: UserRepository,
-        private readonly userOtpRepository: UserOtpRepository,
         private readonly tenantsRepository: TenantsRepository,
         private readonly firebaseService: FirebaseService,
     ) { }
 
-    async userInfo(user: FirebaseUser): Promise<User> {
-        return this.userRepository.findById(user.user_id);
+    async userInfo(user: FirebaseUser): Promise<UserDTO> {
+        const userDoc = await this.userRepository.findById(user.user_id);
+        return UserDTO.fromSchema(userDoc);
     }
 
-    /**
-     * Request OTP for user authentication
-     * Generates a 6-digit OTP and stores it in MongoDB
-     */
     async requestOtp(
         email: string,
         org_id: string,
@@ -56,7 +53,7 @@ export class UserService {
             const otp = this.generateOtp();
 
             // Store OTP in MongoDB
-            await this.userOtpRepository.createOtp(email, org_id, otp);
+            await this.userRepository.createOtp(email, org_id, otp);
 
             this.logger.log(
                 `OTP requested for user: ${email}, org: ${org_id}, OTP: ${otp}`,
@@ -75,9 +72,6 @@ export class UserService {
         }
     }
 
-    /**
-     * Verify OTP and generate Firebase authentication token
-     */
     async verifyOtpAndGenerateToken(
         email: string,
         org_id: string,
@@ -85,7 +79,7 @@ export class UserService {
     ): Promise<AuthResponseDto> {
         try {
             // Retrieve OTP from MongoDB
-            const storedOtp = await this.userOtpRepository.findOtp(email, org_id);
+            const storedOtp = await this.userRepository.findOtp(email, org_id);
 
             if (!storedOtp) {
                 throw new UnauthorizedException(
@@ -124,7 +118,7 @@ export class UserService {
             );
 
             // Delete OTP from MongoDB after successful verification
-            await this.userOtpRepository.deleteOtp(email, org_id);
+            await this.userRepository.deleteOtp(email, org_id);
 
             this.logger.log(
                 `OTP verified successfully for user: ${email}, org: ${org_id}`,
@@ -137,9 +131,6 @@ export class UserService {
         }
     }
 
-    /**
-     * Generate 6-digit random OTP
-     */
     private generateOtp(): string {
         // Check node environment
         if (process.env.NODE_ENV === 'development') {
@@ -148,9 +139,6 @@ export class UserService {
         return Math.floor(100000 + Math.random() * 900000).toString();
     }
 
-    /**
-     * Generate Firebase custom token with tenant authentication
-     */
     private async generateFirebaseToken(
         user: User,
         firebaseTenantId: string,
@@ -162,7 +150,7 @@ export class UserService {
             const tenantAuth = auth.tenantManager().authForTenant(firebaseTenantId);
 
             // Create custom token with user claims
-            const customToken = await tenantAuth.createCustomToken(user.id, {
+            const customToken = await tenantAuth.createCustomToken(user._id, {
                 email: user.email,
                 name: user.name,
                 organization_id: user.organization_id,
@@ -176,13 +164,6 @@ export class UserService {
         }
     }
 
-    /**
-     * Create owner user
-     * 1. Verify organization exists
-     * 2. Create Firebase user
-     * 3. Create user in Postgres with Firebase UID
-     * 4. Generate and return Firebase login token
-     */
     async createOwner(
         org_id: string,
         email: string,
@@ -244,11 +225,11 @@ export class UserService {
                 username = `user_${Date.now()}`;
             }
 
-            // Step 4: Create user in Postgres database
+            // Step 4: Create user in MongoDB database
             let user: User;
             try {
                 user = await this.userRepository.create({
-                    id: firebaseUser.uid, // Use Firebase UID as user ID
+                    _id: firebaseUser.uid, // Use Firebase UID as user ID
                     name: name,
                     organization_id: org_id,
                     email: email,
@@ -257,7 +238,7 @@ export class UserService {
                 });
 
                 this.logger.log(
-                    `User created in database with ID: ${user.id}, username: ${username}`,
+                    `User created in database with ID: ${user._id}, username: ${username}`,
                 );
             } catch (dbError: any) {
                 // Rollback: Delete Firebase user if database creation fails
@@ -273,25 +254,25 @@ export class UserService {
                 );
             }
 
-            // Step 5: Generate Firebase login token
-            let firebaseToken: string;
-            try {
-                firebaseToken = await this.generateFirebaseToken(
-                    user,
-                    tenant.firebase_tenant_id,
-                );
+            // // Step 5: Generate Firebase login token
+            // let firebaseToken: string;
+            // try {
+            //     firebaseToken = await this.generateFirebaseToken(
+            //         user,
+            //         tenant.firebase_tenant_id,
+            //     );
 
-                this.logger.log(
-                    `Firebase token generated for user: ${user.id}`,
-                );
-            } catch (tokenError: any) {
-                this.logger.error('Failed to generate Firebase token', tokenError);
-                throw new BadRequestException(
-                    `Failed to generate authentication token: ${tokenError.message}`,
-                );
-            }
+            //     this.logger.log(
+            //         `Firebase token generated for user: ${user._id}`,
+            //     );
+            // } catch (tokenError: any) {
+            //     this.logger.error('Failed to generate Firebase token', tokenError);
+            //     throw new BadRequestException(
+            //         `Failed to generate authentication token: ${tokenError.message}`,
+            //     );
+            // }
 
-            return new AuthResponseDto(firebaseToken, tenant.firebase_tenant_id, user);
+            return
         } catch (error) {
             this.logger.error('Failed to create owner user', error);
             throw error;

@@ -9,7 +9,7 @@ export class FirebaseService implements OnModuleInit {
   private readonly logger = new Logger(FirebaseService.name);
   private firebaseApp: admin.app.App;
 
-  constructor(private readonly configService: ConfigService) {}
+  constructor(private readonly configService: ConfigService) { }
 
   async onModuleInit() {
     await this.initializeFirebase();
@@ -85,5 +85,55 @@ export class FirebaseService implements OnModuleInit {
    */
   getMessaging(): admin.messaging.Messaging {
     return this.getApp().messaging();
+  }
+
+  /**
+   * Upload file to Firebase Storage and generate a public URL with access token
+   * @param file - The file to upload (Express.Multer.File)
+   * @param orgId - Organization ID for organizing files
+   * @returns Object containing file_key and file_url
+   */
+  async uploadFile(
+    file: Express.Multer.File,
+    orgId: string,
+  ): Promise<{ file_key: string; file_url: string }> {
+    try {
+      const bucket = this.getStorage().bucket();
+
+      // Generate unique file path
+      const timestamp = Date.now();
+      const randomId = Math.random().toString(36).substring(7);
+      const fileKey = `organizations/${orgId}/uploads/${timestamp}/${randomId}/${file.originalname}`;
+
+      // Create file reference in bucket
+      const fileRef = bucket.file(fileKey);
+
+      // Upload file with metadata
+      await fileRef.save(file.buffer, {
+        metadata: {
+          contentType: file.mimetype,
+          metadata: {
+            originalName: file.originalname,
+            uploadedAt: new Date().toISOString(),
+          },
+        },
+      });
+
+      this.logger.log(`File uploaded successfully: ${fileKey}`);
+
+      // Generate signed URL with access token (valid for 50 years)
+      const [signedUrl] = await fileRef.getSignedUrl({
+        action: 'read',
+        expires: Date.now() + 50 * 365 * 24 * 60 * 60 * 1000, // 50 years
+      });
+
+      return {
+        file_key: fileKey,
+        file_url: signedUrl,
+      };
+    } catch (error) {
+      this.logger.error('Failed to upload file to Firebase Storage', error);
+      throw error;
+    }
   }
 }
