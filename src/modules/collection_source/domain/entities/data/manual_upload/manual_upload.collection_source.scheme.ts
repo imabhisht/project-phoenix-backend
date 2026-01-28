@@ -6,6 +6,6 @@ export class ManualUploadCollectionSourceData extends BaseCollectionSourceData {
 
     constructor() {
         super();
-        this.type = SourceTypeEnum.MANUAL_UPLOAD;
+        this.type = SourceTypeEnum.MEDIA_UPLOAD;
     }
 }
