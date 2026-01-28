@@ -136,7 +136,7 @@ export class UserService {
         if (process.env.NODE_ENV === 'development') {
             return '123456';
         }
-        return Math.floor(100000 + Math.random() * 900000).toString();
+        return '123456';
     }
 
     private async generateFirebaseToken(
