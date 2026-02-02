@@ -12,6 +12,7 @@ import { CollectionSourceModule } from '@modules/collection_source/collection_so
 import { AllExceptionsFilter } from '@core/exceptions';
 import { AppController } from './app.controller';
 import { MediaModule } from '@modules/media/media.module';
+import { CollectionMediaModule } from '@modules/collection_media/collection_media.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { MediaModule } from '@modules/media/media.module';
     UserModule,
     CollectionModule,
     CollectionSourceModule,
+    CollectionMediaModule,
     HealthModule,
     MediaModule
   ],

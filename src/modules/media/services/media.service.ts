@@ -15,6 +15,10 @@ export class MediaService {
         private readonly firebaseService: FirebaseService,
     ) { }
 
+    async findById(id: string): Promise<Media | null> {
+        return this.mediaRepository.findById(id);
+    }
+
     async uploadFile(file: Express.Multer.File, user: FirebaseUser): Promise<MediaDTO> {
 
         const fileExtension = this.getFileExtension(file.originalname);

@@ -21,7 +21,7 @@ export class CollectionRepository {
     }
 
     async findByOrgId(org_id: string): Promise<Collection[]> {
-        return this.collectionModel.find({ org_id, is_deleted: false });
+        return this.collectionModel.find({ org_id, is_deleted: false }).sort({ updated_at: -1 });
     }
 
     async update(id: string, updateData: Partial<Collection>): Promise<Collection> {

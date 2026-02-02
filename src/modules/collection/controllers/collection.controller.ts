@@ -9,7 +9,8 @@ import {
     HttpCode,
     HttpStatus,
     Logger,
-    UseGuards
+    UseGuards,
+    Query
 } from '@nestjs/common';
 import { CollectionService } from '../services/collection.service';
 import { CollectionDTO } from '../dtos/collection.dto';
@@ -17,6 +18,7 @@ import { APIResponse, EmptyAPIResponse } from '@shared/dto';
 import { FirebaseAuthGuard } from '@shared/guards';
 import { CurrentUser } from '@shared/decorators';
 import { FirebaseUser } from '@shared/interfaces';
+import { CollectionOverviewDTO } from '../dtos/collectionOverview.dto';
 
 @Controller('collection')
 export class CollectionController {
@@ -35,21 +37,22 @@ export class CollectionController {
         return new APIResponse<CollectionDTO>().SuccessResult(newCollection, 'Collection created successfully');
     }
 
-    @Get(':id')
+    @Get("overview")
     @HttpCode(HttpStatus.OK)
-    async findById(
-        @Param('id') id: string,
-    ): Promise<APIResponse<CollectionDTO>> {
-        const collection = await this.collectionService.findById(id);
-        return new APIResponse<CollectionDTO>().SuccessResult(collection, 'Collection fetched successfully');
+    async getCollectionOverview(
+        @Query('id') id: string,
+    ): Promise<APIResponse<CollectionOverviewDTO>> {
+        const collection = await this.collectionService.getCollectionOverview(id);
+        return new APIResponse<CollectionOverviewDTO>().SuccessResult(collection, 'Collection overview fetched successfully');
     }
 
-    @Get('org/:org_id')
+    @Get()
+    @UseGuards(FirebaseAuthGuard)
     @HttpCode(HttpStatus.OK)
     async findByOrgId(
-        @Param('org_id') org_id: string,
+        @CurrentUser() user: FirebaseUser,
     ): Promise<APIResponse<CollectionDTO[]> | APIResponse<EmptyAPIResponse>> {
-        const collections = await this.collectionService.findByOrgId(org_id);
+        const collections = await this.collectionService.getCollectionsByOrgId(user.organization_id);
         return new APIResponse<CollectionDTO[]>().SuccessResult(collections, 'Collections fetched successfully');
     }
 

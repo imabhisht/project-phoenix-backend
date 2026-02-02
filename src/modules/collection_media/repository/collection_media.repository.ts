@@ -18,6 +18,10 @@ export class CollectionMediaRepository {
         return this.collectionMediaModel.findById(id);
     }
 
+    async findByCollectionSourceId(collection_source_id: string): Promise<CollectionMedia[]> {
+        return this.collectionMediaModel.find({ collection_source_id, is_deleted: false });
+    }
+
     async findByCollectionId(collection_id: string): Promise<CollectionMedia[]> {
         return this.collectionMediaModel.find({ collection_id, is_deleted: false });
     }

@@ -19,13 +19,13 @@ export class MediaDTO {
     @ApiProperty()
     file_size: number;
     @ApiProperty()
-    file_url: string;
+    file_url?: string | null;
     @ApiProperty()
     created_at: Date;
     @ApiProperty()
     updated_at: Date;
 
-    static fromSchema(media: Media, file_url: string): MediaDTO {
+    static fromSchema(media: Media, file_url?: string | null): MediaDTO {
         return {
             id: media._id,
             org_id: media.org_id,
@@ -34,7 +34,7 @@ export class MediaDTO {
             file_name: media.file_name,
             file_type: media.file_type,
             file_size: media.file_size,
-            file_url: file_url,
+            file_url: file_url ?? null,
             created_at: media.created_at,
             updated_at: media.updated_at,
         };

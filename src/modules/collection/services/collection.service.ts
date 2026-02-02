@@ -3,9 +3,10 @@ import { CollectionRepository } from '../repository/collection.repository';
 import { CollectionDTO } from '../dtos/collection.dto';
 import { Collection } from '../domain/entities/collection.schema';
 import { CollectionSourceRepository } from '@modules/collection_source/repository/collection_source.repository';
-import { ManualUploadCollectionSourceData } from '@modules/collection_source/domain/entities/data/manual_upload/manual_upload.collection_source.scheme';
+import { MediaUploadCollectionSourceData } from '@modules/collection_source/domain/entities/data/media_upload/media_upload.collection_source.scheme';
 import { CollectionSource } from '@modules/collection_source/domain/entities/collection_source.scheme';
 import { FirebaseUser } from '@shared/interfaces';
+import { CollectionOverviewDTO } from '../dtos/collectionOverview.dto';
 
 
 @Injectable()
@@ -20,7 +21,7 @@ export class CollectionService {
     async create(user: FirebaseUser, createCollectionDTO: CollectionDTO): Promise<CollectionDTO> {
         const collection = await this.collectionRepository.create(createCollectionDTO.toSchema(user.organization_id, user.user_id))
 
-        const manualUploadCollectionSource = new ManualUploadCollectionSourceData()
+        const manualUploadCollectionSource = new MediaUploadCollectionSourceData()
         const collectionSource = new CollectionSource()
         collectionSource.collection_id = collection._id
         collectionSource.name = `Manual Upload`
@@ -31,12 +32,15 @@ export class CollectionService {
         return CollectionDTO.fromSchema(collection);
     }
 
-    async findById(id: string): Promise<CollectionDTO> {
+    async findById(id: string): Promise<Collection | null> {
         const collection = await this.collectionRepository.findById(id);
-        return CollectionDTO.fromSchema(collection);
+        if (!collection) {
+            throw new NotFoundException('Collection not found');
+        }
+        return collection;
     }
 
-    async findByOrgId(org_id: string): Promise<CollectionDTO[]> {
+    async getCollectionsByOrgId(org_id: string): Promise<CollectionDTO[]> {
         const collections = await this.collectionRepository.findByOrgId(org_id);
         return collections.map(collection => CollectionDTO.fromSchema(collection));
     }
@@ -53,4 +57,14 @@ export class CollectionService {
         const deletedCollection = await this.collectionRepository.delete(id);
         return CollectionDTO.fromSchema(deletedCollection);
     }
+
+    async getCollectionOverview(id: string): Promise<CollectionOverviewDTO> {
+        const collection = await this.collectionRepository.findById(id);
+        if (!collection) {
+            throw new NotFoundException('Collection not found');
+        }
+        const collectionSources = await this.collectionSourceRepository.findByCollectionId(collection._id);
+        return CollectionOverviewDTO.fromSchema(collection, collectionSources);
+    }
 }
+

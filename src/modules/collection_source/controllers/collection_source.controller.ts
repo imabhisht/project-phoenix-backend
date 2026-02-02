@@ -33,17 +33,17 @@ export class CollectionSourceController {
         );
     }
 
-    @Get(':id')
-    @HttpCode(HttpStatus.OK)
-    async findById(
-        @Param('id') id: string,
-    ): Promise<APIResponse<CollectionSourceDTO>> {
-        const collectionSource = await this.collectionSourceService.findById(id);
-        return new APIResponse<CollectionSourceDTO>().SuccessResult(
-            collectionSource,
-            'Collection source fetched successfully'
-        );
-    }
+    // @Get(':id')
+    // @HttpCode(HttpStatus.OK)
+    // async findById(
+    //     @Param('id') id: string,
+    // ): Promise<APIResponse<CollectionSourceDTO>> {
+    //     const collectionSource = await this.collectionSourceService.findById(id);
+    //     return new APIResponse<CollectionSourceDTO>().SuccessResult(
+    //         collectionSource,
+    //         'Collection source fetched successfully'
+    //     );
+    // }
 
     @Put(':id')
     @HttpCode(HttpStatus.OK)

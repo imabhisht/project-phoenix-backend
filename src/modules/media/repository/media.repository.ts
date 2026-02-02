@@ -20,6 +20,10 @@ export class MediaRepository {
         return this.mediaModel.findById(id);
     }
 
+    async findByIds(ids: string[]): Promise<Media[]> {
+        return this.mediaModel.find({ _id: { $in: ids }, is_deleted: false });
+    }
+
     async findByOrgId(org_id: string): Promise<Media[]> {
         return this.mediaModel.find({ org_id, is_deleted: false });
     }

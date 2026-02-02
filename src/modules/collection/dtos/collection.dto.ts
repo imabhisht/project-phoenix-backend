@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsDate } from 'class-validator';
 import { Collection } from '../domain/entities/collection.schema';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -17,6 +17,16 @@ export class CollectionDTO {
     @IsOptional()
     description?: string;
 
+    @ApiProperty()
+    @IsString()
+    @IsOptional()
+    created_at?: Date;
+
+    @ApiProperty()
+    @IsDate()
+    @IsOptional()
+    updated_at?: Date;
+
     toSchema(org_id: string, user_id: string): Collection {
         const collection = new Collection();
         collection.name = this.name;
@@ -34,6 +44,8 @@ export class CollectionDTO {
         dto.id = collection._id;
         dto.name = collection.name;
         dto.description = collection.description || null;
+        dto.created_at = collection.created_at;
+        dto.updated_at = collection.updated_at;
         return dto;
     }
 }

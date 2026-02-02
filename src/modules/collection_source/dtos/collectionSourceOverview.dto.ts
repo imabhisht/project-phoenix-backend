@@ -1,16 +1,12 @@
 import { IsString, IsNotEmpty, IsOptional, IsEnum, IsDate, IsBoolean, ValidateNested } from 'class-validator';
 import { CollectionSource } from '../domain/entities/collection_source.scheme';
-import { BaseCollectionSourceData } from '../domain/entities/data/baseData';
-import { CollectionSourceStatusEnum } from '../domain/enums/status';
 import { Type } from 'class-transformer';
 import { BaseCollectionSourceDataDTO } from './data/baseData.collection_source';
-import { AWS_S3CollectionSourceDataDTO } from './data/aws_s3/aws_s3.collection_source.dto';
 import { SourceTypeEnum } from '../domain/enums/source_types';
 import { CollectionSourceDataFactory } from './data/dataFactory.collection_source';
-import { GoogleDriveCollectionSourceDataDTO } from './data/google_drive/google_drive.collection_source.dto';
 import { MediaUploadCollectionSourceDataDTO } from './data/media_upload/media_upload.collection_source.dto';
 
-export class CollectionSourceDTO {
+export class CollectionSourceOverviewDTO {
     @IsString()
     @IsOptional()
     id: string;
@@ -30,21 +26,13 @@ export class CollectionSourceDTO {
         discriminator: {
             property: 'type',
             subTypes: [
-                { value: AWS_S3CollectionSourceDataDTO, name: SourceTypeEnum.AWS_S3 },
-                { value: GoogleDriveCollectionSourceDataDTO, name: SourceTypeEnum.GOOGLE_DRIVE },
+                // { value: AWS_S3CollectionSourceDataDTO, name: SourceTypeEnum.AWS_S3 },
+                // { value: GoogleDriveCollectionSourceDataDTO, name: SourceTypeEnum.GOOGLE_DRIVE },
                 { value: MediaUploadCollectionSourceDataDTO, name: SourceTypeEnum.MEDIA_UPLOAD },
             ],
         },
     })
     data: BaseCollectionSourceDataDTO;
-
-    @IsEnum(CollectionSourceStatusEnum)
-    @IsOptional()
-    status?: CollectionSourceStatusEnum;
-
-    @IsDate()
-    @IsOptional()
-    last_synced_at?: Date | null;
 
     @IsBoolean()
     @IsOptional()
@@ -58,19 +46,8 @@ export class CollectionSourceDTO {
     @IsOptional()
     updated_at?: Date;
 
-    toSchema(): CollectionSource {
-        const collectionSource = new CollectionSource();
-        collectionSource.collection_id = this.collection_id;
-        collectionSource.name = this.name;
-        collectionSource.data = this.data;
-        collectionSource.is_deleted = false;
-        collectionSource.created_at = new Date();
-        collectionSource.updated_at = new Date();
-        return collectionSource;
-    }
-
-    static fromSchema(collectionSource: CollectionSource): CollectionSourceDTO {
-        const dto = new CollectionSourceDTO();
+    static fromSchema(collectionSource: CollectionSource): CollectionSourceOverviewDTO {
+        const dto = new CollectionSourceOverviewDTO();
         dto.id = collectionSource._id;
         dto.collection_id = collectionSource.collection_id;
         dto.name = collectionSource.name;

@@ -4,6 +4,7 @@ import { CollectionSourceDTO } from '../dtos/collection_source.dto';
 import { CollectionSourceDataServiceFactory } from './data/serviceFactory';
 import { IGoogleDriveCollectionSourceService } from './data/baseService';
 import { SourceTypeEnum } from '../domain/enums/source_types';
+import { CollectionSource } from '../domain/entities/collection_source.scheme';
 
 @Injectable()
 export class CollectionSourceService {
@@ -28,9 +29,8 @@ export class CollectionSourceService {
         return CollectionSourceDTO.fromSchema(newCollectionSource);
     }
 
-    async findById(id: string): Promise<CollectionSourceDTO> {
-        const collection = await this.collectionSourceRepository.findById(id);
-        return CollectionSourceDTO.fromSchema(collection);
+    async findById(id: string): Promise<CollectionSource | null> {
+        return this.collectionSourceRepository.findById(id);
     }
 
     async update(id: string, updateCollectionSourceDTO: CollectionSourceDTO): Promise<CollectionSourceDTO> {
@@ -44,6 +44,11 @@ export class CollectionSourceService {
         await this.findById(id);
         const deletedCollectionSource = await this.collectionSourceRepository.delete(id);
         return CollectionSourceDTO.fromSchema(deletedCollectionSource);
+    }
+
+    async findByCollectionId(collection_id: string): Promise<CollectionSource[]> {
+        const collectionSources = await this.collectionSourceRepository.findByCollectionId(collection_id);
+        return collectionSources;
     }
 
     // Google Drive OAuth specific methods

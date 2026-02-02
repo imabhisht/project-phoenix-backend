@@ -31,4 +31,8 @@ export class CollectionSourceRepository {
     async findByCollectionIdAndName(collection_id: string, name: string): Promise<CollectionSource | null> {
         return this.collectionSourceModel.findOne({ collection_id, name, is_deleted: false });
     }
+
+    async findByCollectionId(collection_id: string): Promise<CollectionSource[]> {
+        return this.collectionSourceModel.find({ collection_id, is_deleted: false }).sort({ updated_at: -1 });
+    }
 }
