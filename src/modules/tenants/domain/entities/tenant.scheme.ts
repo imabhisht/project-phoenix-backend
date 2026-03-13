@@ -4,8 +4,6 @@ import { IdentifiableEntity } from '@shared/scheme/IdentifiableEntity.scheme';
 
 @Schema({ collection: 'tenant' })
 export class Tenant extends IdentifiableEntity {
-    @Prop({ required: true, type: String, unique: true })
-    firebase_tenant_id: string;
 
     @Prop({ required: true, type: String })
     name: string;
@@ -22,6 +20,3 @@ export class Tenant extends IdentifiableEntity {
 
 export type TenantDocument = Tenant & Document;
 export const TenantSchema = SchemaFactory.createForClass(Tenant);
-
-// Create index for firebase_tenant_id for efficient lookups
-TenantSchema.index({ firebase_tenant_id: 1 }, { unique: true });

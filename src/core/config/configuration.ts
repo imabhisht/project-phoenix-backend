@@ -3,7 +3,7 @@ export enum EnvObjects {
   POSTGRES_OPTIONS = 'PostgresOptions',
   REDIS_OPTIONS = 'RedisOptions',
   SYSTEM_OPTIONS = 'SystemOptions',
-  FIREBASE_OPTIONS = 'FirebaseOptions',
+  JWT_OPTIONS = 'JwtOptions',
 }
 
 export interface MongoOptions {
@@ -40,17 +40,11 @@ export interface SystemOptions {
   apiMode: string;
 }
 
-export interface FirebaseOptions {
-  projectId: string;
-  privateKey: string;
-  clientEmail: string;
-  clientId: string;
-  authUri: string;
-  tokenUri: string;
-  authCertUrl: string;
-  storageBucket: string;
-  privateKeyId: string;
-  type: string;
+export interface JwtOptions {
+  accessSecret: string;
+  refreshSecret: string;
+  accessExpiresIn: string;
+  refreshExpiresIn: string;
 }
 
 export const configuration = (): any => ({
@@ -88,16 +82,10 @@ export const configuration = (): any => ({
     port: process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT) : 6379,
     pass: process.env.REDIS_PASS,
   },
-  FirebaseOptions: {
-    projectId: process.env.FIREBASE_PROJECT_ID,
-    privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-    clientId: process.env.FIREBASE_CLIENT_ID,
-    authUri: process.env.FIREBASE_AUTH_URI,
-    tokenUri: process.env.FIREBASE_TOKEN_URI,
-    authCertUrl: process.env.FIREBASE_AUTH_CERT_URL,
-    storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-    privateKeyId: process.env.FIREBASE_PRIVATE_KEY_ID,
-    type: process.env.FIREBASE_TYPE || 'service_account',
+  JwtOptions: {
+    accessSecret: process.env.JWT_ACCESS_SECRET || 'change-me-in-production',
+    refreshSecret: process.env.JWT_REFRESH_SECRET || 'change-me-refresh-in-production',
+    accessExpiresIn: process.env.JWT_ACCESS_EXPIRES_IN || '1h',
+    refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '30d',
   },
 });

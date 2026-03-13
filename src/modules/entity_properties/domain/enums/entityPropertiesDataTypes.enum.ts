@@ -1,0 +1,16 @@
+export enum EntityPropertiesDataTypeEnum {
+    STRING = 'string',
+    TEXT = 'text',
+    KEYWORD = 'keyword',
+    INTEGER = 'integer',
+    FLOAT = 'float',
+    BOOLEAN = 'boolean',
+    DATE = 'date',
+    DATETIME = 'datetime',
+    GEO = 'geo',
+    URL = 'url',
+    EMAIL = 'email',
+    PHONE = 'phone',
+    ENUM = 'enum',
+    JSON = 'json',
+}

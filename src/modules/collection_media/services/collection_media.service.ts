@@ -8,7 +8,7 @@ import { CollectionMediaDataServiceFactory } from "./data/serviceFactory";
 import { SourceTypeEnum } from "@modules/collection_source/domain/enums/source_types";
 import { CollectionSourceRepository } from "@modules/collection_source/repository/collection_source.repository";
 import { BaseCollectionMediaDataDTO } from "../dtos/data/baseCollectionMediaData";
-import { CollectionService } from "@modules/collection/services/collection.service";
+import { CollectionService } from "@modules/collections/services/collection.service";
 import { CollectionSourceService } from "@modules/collection_source/services/collection_source.service";
 import { AIIndexingStatus } from "../domain/entities/ai_indexing_status.collection_media";
 import { MediaUploadCollectionMediaData } from "../domain/entities/data/media_upload/media_upload.collection_data.scheme";

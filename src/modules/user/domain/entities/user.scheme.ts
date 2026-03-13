@@ -17,8 +17,11 @@ export class User extends IdentifiableEntity {
     @Prop({ required: true, type: String })
     username: string;
 
-    @Prop({ required: true, type: String })
+    @Prop({ required: true, type: String, enum: UserRoles })
     role: UserRoles;
+
+    @Prop({ type: String, default: null })
+    password_hash: string | null;
 
     @Prop({ type: Date, default: () => new Date() })
     created_at: Date;
@@ -30,7 +33,7 @@ export class User extends IdentifiableEntity {
 export type UserDocument = User & Document;
 export const UserSchema = SchemaFactory.createForClass(User);
 
-// Create compound index for organization_id and email for efficient lookups
-UserSchema.index({ organization_id: 1, email: 1 }, { unique: true });
+// Create compound index for org_id and email for efficient lookups
+UserSchema.index({ org_id: 1, email: 1 }, { unique: true });
 // Create index for username for efficient lookups
 UserSchema.index({ username: 1 }, { unique: true });

@@ -7,15 +7,15 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from '../decorators/roles.decorator';
-import { FirebaseUser } from '../interfaces/firebase-user.interface';
+import { JwtUser } from '../interfaces/jwt-user.interface';
 
 /**
  * Guard to check if the authenticated user has the required role(s)
- * Must be used after FirebaseAuthGuard
+ * Must be used after JwtAuthGuard
  * 
  * Usage:
  * @Roles('admin', 'owner')
- * @UseGuards(FirebaseAuthGuard, RolesGuard)
+ * @UseGuards(JwtAuthGuard, RolesGuard)
  * async adminOnlyEndpoint() { ... }
  */
 @Injectable()
@@ -36,12 +36,12 @@ export class RolesGuard implements CanActivate {
             return true;
         }
 
-        // Get the user from the request (set by FirebaseAuthGuard)
+        // Get the user from the request (set by JwtAuthGuard)
         const request = context.switchToHttp().getRequest();
-        const user: FirebaseUser = request.user;
+        const user: JwtUser = request.user;
 
         if (!user) {
-            this.logger.error('No user found in request. FirebaseAuthGuard must be used before RolesGuard');
+            this.logger.error('No user found in request. JwtAuthGuard must be used before RolesGuard');
             throw new ForbiddenException('Authentication required');
         }
 

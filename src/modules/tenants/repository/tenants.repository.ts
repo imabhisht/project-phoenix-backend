@@ -15,8 +15,4 @@ export class TenantsRepository {
   async findById(id: string): Promise<Tenant | undefined> {
     return await this.tenantModel.findById(id).lean();
   }
-
-  async findByFirebaseTenantId(firebaseTenantId: string): Promise<Tenant | undefined> {
-    return await this.tenantModel.findOne({ firebase_tenant_id: firebaseTenantId }).lean();
-  }
 }

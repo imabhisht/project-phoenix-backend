@@ -9,7 +9,7 @@ import { CollectionSourceRepository } from '@modules/collection_source/repositor
 import { MediaRepository } from '@modules/media/repository/media.repository';
 import { Media, MediaSchema } from '@modules/media/domain/entities/media.scheme';
 import { CollectionSourceModule } from '@modules/collection_source/collection_source.module';
-import { CollectionModule } from '@modules/collection/collection.module';
+import { CollectionModule } from '@modules/collections/collection.module';
 import { MediaModule } from '@modules/media/media.module';
 import { CollectionMediaDataServiceFactory } from './services/data/serviceFactory';
 import { ManualUploadCollectionMediaService } from './services/data/manual_upload/manualUpload.collectionMedia.service';

@@ -1,1 +1,1 @@
-export * from './firebase-user.interface';
+export * from './jwt-user.interface';

@@ -13,8 +13,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { MediaService } from '../services/media.service';
 import { MediaDTO } from '../dtos/media.dto';
 import { CurrentUser } from '@shared/decorators';
-import { FirebaseUser } from '@shared/interfaces';
-import { FirebaseAuthGuard } from '@shared/guards';
+import { JwtUser } from '@shared/interfaces/jwt-user.interface';
+import { JwtAuthGuard } from '@shared/guards';
 import { APIResponse, EmptyAPIResponse } from '@shared/dto';
 
 @Controller('media')
@@ -24,12 +24,12 @@ export class MediaController {
     constructor(private readonly mediaService: MediaService) { }
 
     @Post('upload')
-    @UseGuards(FirebaseAuthGuard)
+    @UseGuards(JwtAuthGuard)
     @UseInterceptors(FileInterceptor('file'))
     @HttpCode(HttpStatus.CREATED)
     async uploadFile(
         @UploadedFile() file: Express.Multer.File,
-        @CurrentUser() user: FirebaseUser,
+        @CurrentUser() user: JwtUser,
     ): Promise<APIResponse<MediaDTO> | APIResponse<EmptyAPIResponse>> {
         try {
             if (!file) {

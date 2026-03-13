@@ -1,19 +1,19 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { FirebaseUser } from '../interfaces/firebase-user.interface';
+import { JwtUser } from '../interfaces/jwt-user.interface';
 
 /**
- * Parameter decorator to extract the authenticated Firebase user from the request
+ * Parameter decorator to extract the authenticated JWT user from the request
  * 
  * Usage:
- * @UseGuards(FirebaseAuthGuard)
- * async getProfile(@CurrentUser() user: FirebaseUser) {
+ * @UseGuards(JwtAuthGuard)
+ * async getProfile(@CurrentUser() user: JwtUser) {
  *   return { name: user.name, email: user.email };
  * }
  * 
- * @returns The authenticated FirebaseUser object attached by FirebaseAuthGuard
+ * @returns The authenticated JwtUser object attached by JwtAuthGuard
  */
 export const CurrentUser = createParamDecorator(
-    (data: unknown, ctx: ExecutionContext): FirebaseUser => {
+    (data: unknown, ctx: ExecutionContext): JwtUser => {
         const request = ctx.switchToHttp().getRequest();
         return request.user;
     },

@@ -2,9 +2,8 @@ import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import { MediaRepository } from '../repository/media.repository';
 import { Media, MediaBucketType } from '@modules/media/domain/entities/media.scheme';
 import { FileTypeEnum } from '../domain/enums/fileTypes.enum';
-import { FirebaseUser } from '@shared/interfaces';
+import { JwtUser } from '@shared/interfaces/jwt-user.interface';
 import { MediaDTO } from '../dtos/media.dto';
-import { FirebaseService } from '@modules/firebase/firebase.service';
 
 @Injectable()
 export class MediaService {
@@ -12,15 +11,13 @@ export class MediaService {
 
     constructor(
         private readonly mediaRepository: MediaRepository,
-        private readonly firebaseService: FirebaseService,
     ) { }
 
     async findById(id: string): Promise<Media | null> {
         return this.mediaRepository.findById(id);
     }
 
-    async uploadFile(file: Express.Multer.File, user: FirebaseUser): Promise<MediaDTO> {
-
+    async uploadFile(file: Express.Multer.File, user: JwtUser): Promise<MediaDTO> {
         const fileExtension = this.getFileExtension(file.originalname);
         if (!this.isValidFileType(fileExtension)) {
             throw new BadRequestException(
@@ -28,15 +25,16 @@ export class MediaService {
             );
         }
 
-        // Upload file to Firebase Storage and get file_key and file_url
-        const { file_key, file_url } = await this.firebaseService.uploadFile(
-            file,
-            user.organization_id
-        );
+        // Placeholder: Since Firebase is removed, implementing a real storage backend 
+        // (like S3 or local storage) should be done in a separate task.
+        const file_key = `placeholder_${Date.now()}_${file.originalname}`;
+        const file_url = `http://localhost:3000/placeholder/${file_key}`;
+
+        this.logger.warn(`File upload placeholder triggered for ${file.originalname}. Firebase is removed.`);
 
         const mediaData: Partial<Media> = {
-            org_id: user.organization_id,
-            bucket_type: MediaBucketType.FIREBASE_STORAGE,
+            org_id: user.org_id,
+            bucket_type: MediaBucketType.FIREBASE_STORAGE, // Keep enum for now to avoid breaking schema
             file_key: file_key,
             file_name: file.originalname,
             file_type: fileExtension as FileTypeEnum,
@@ -47,8 +45,6 @@ export class MediaService {
         };
 
         const createdMedia = await this.mediaRepository.create(mediaData);
-
-        // Pass the file_url to fromSchema to send it to frontend
         return MediaDTO.fromSchema(createdMedia, file_url);
     }
 

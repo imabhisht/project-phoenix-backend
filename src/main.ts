@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { Logger, ValidationPipe } from '@nestjs/common';
+import * as cookieParser from 'cookie-parser';
 import { HttpExceptionFilter } from './shared/filters';
 
 async function bootstrap() {
@@ -27,6 +28,10 @@ async function bootstrap() {
     }),
   );
   logger.debug('Global validation pipe enabled');
+
+  // Enable cookie-parser for JWT cookie-based auth
+  app.use(cookieParser());
+  logger.debug('Cookie-parser middleware enabled');
 
   // Enable global exception filter for standardized error responses
   app.useGlobalFilters(new HttpExceptionFilter());

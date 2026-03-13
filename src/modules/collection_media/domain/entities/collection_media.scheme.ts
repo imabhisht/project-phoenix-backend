@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
 import { IdentifiableEntity } from '@shared/scheme/IdentifiableEntity.scheme';
-import { Collection } from '@modules/collection/domain/entities/collection.schema';
+import { Collection } from '@modules/collections/domain/entities/collection.schema';
 import { CollectionSource } from '@modules/collection_source/domain/entities/collection_source.scheme';
 import { BaseCollectionMediaData } from './data/baseData';
 import { AIIndexingStatus } from './ai_indexing_status.collection_media';

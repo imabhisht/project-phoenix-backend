@@ -42,12 +42,12 @@ export class UserRepository implements OnModuleInit {
 
     async findById(id: string): Promise<User | undefined> {
         return await this.userModel.findById(id).lean();
-        
+
     }
 
     async findByUsername(username: string): Promise<User | undefined> {
         return await this.userModel.findOne({ username }).lean();
-        
+
     }
 
     async findByOrganizationAndEmail(organizationId: string, email: string): Promise<User | undefined> {
@@ -55,18 +55,23 @@ export class UserRepository implements OnModuleInit {
             org_id: organizationId,
             email: email
         }).lean();
-        
+
     }
 
     async create(userData: {
-        _id: string;
+        _id?: string;
         name: string;
         org_id: string;
         email: string;
         username: string;
         role: string;
+        password_hash?: string;
     }): Promise<User> {
         return await this.userModel.create(userData);
+    }
+
+    async updatePasswordHash(userId: string, hash: string): Promise<void> {
+        await this.userModel.updateOne({ _id: userId }, { password_hash: hash });
     }
 
     // ==================== OTP Methods ====================

@@ -15,9 +15,9 @@ import {
 import { CollectionMediaService } from '../services/collection_media.service';
 import { CollectionMediaDTO } from '../dtos/collection_media.dto';
 import { APIResponse, EmptyAPIResponse } from '@shared/dto';
-import { FirebaseAuthGuard } from '@shared/guards';
+import { JwtAuthGuard } from '@shared/guards';
 import { CurrentUser } from '@shared/decorators';
-import { FirebaseUser } from '@shared/interfaces';
+import { JwtUser } from '@shared/interfaces/jwt-user.interface';
 
 @Controller('collection_media')
 export class CollectionMediaController {
@@ -26,11 +26,11 @@ export class CollectionMediaController {
     constructor(private readonly collectionMediaService: CollectionMediaService) { }
 
     @Post()
-    @UseGuards(FirebaseAuthGuard)
+    @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.CREATED)
     async create(
         @Body() collectionMediaDTO: CollectionMediaDTO,
-        @CurrentUser() user: FirebaseUser,
+        @CurrentUser() user: JwtUser,
     ): Promise<APIResponse<CollectionMediaDTO>> {
         const newCollectionMedia = await this.collectionMediaService.createCollectionMedia(collectionMediaDTO);
         return new APIResponse<CollectionMediaDTO>().SuccessResult(newCollectionMedia, 'CollectionMedia created successfully');
