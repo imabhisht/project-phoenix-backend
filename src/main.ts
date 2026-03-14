@@ -38,7 +38,7 @@ async function bootstrap() {
   logger.debug('Global exception filter enabled');
 
   // Enable CORS if needed
-  app.enableCors();
+  app.enableCors({ origin: true, credentials: true });
 
   // Enable graceful shutdown
   app.enableShutdownHooks();
