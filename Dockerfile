@@ -20,5 +20,8 @@ COPY package.json ./
 
 RUN npm install --production
 
+# Default runtime env; override via docker run / CI env vars / --env-file
+ENV NODE_ENV=production
+
 EXPOSE 3000
 CMD ["node", "dist/main"]
